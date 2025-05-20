@@ -62,9 +62,62 @@ def main():
 
         list_ciclos.append(ciclos)
 
-        # imprime ciclos
         header = f"Ciclos — {ticker} — {list_tri[0]} & {list_tri[1]}"
         print(header)
         for key, value in ciclos.items():
             print(f"  {key}: {value}")
         print()
+
+        import pandas as pd
+
+
+empresas = ["BRFS3", "MRFG3", "BEEF3", "BAUH4", "MNPR3"]
+
+
+def gravar_indicadores(data_dict):
+    """
+    Recebe um dicionário com os indicadores por empresa e retorna um DataFrame consolidado.
+    
+    Exemplo de data_dict:
+    {
+        "BRFS3": {"ROE": 5.2, "EVA": -120},
+        "MRFG3": {"ROE": 12.4, "EVA": 300},
+        ...
+    }
+    """
+    df = pd.DataFrame.from_dict(data_dict, orient='index')
+    df.index.name = "Empresa"
+    return df
+
+
+def escolher_melhor_empresa(df, criterio="ROE"):
+    """
+    Compara as empresas com base no critério fornecido e retorna a melhor.
+    Pode ser usado com 'ROE', 'EVA' ou outro indicador existente no DataFrame.
+    """
+    if criterio not in df.columns:
+        raise ValueError(f"Critério '{criterio}' não encontrado no DataFrame.")
+    
+    if criterio == "EVA":
+        melhor = df[criterio].idxmax()
+    else:
+        melhor = df[criterio].idxmax()
+        
+    return melhor, df.loc[melhor]
+
+
+if __name__ == "__main__":
+    indicadores = {
+        "BRFS3": {"ROE": 4.3, "EVA": -150},
+        "MRFG3": {"ROE": 9.1, "EVA": 220},
+        "BEEF3": {"ROE": 11.0, "EVA": 180},
+        "BAUH4": {"ROE": 7.5, "EVA": 90},
+        "MNPR3": {"ROE": 6.8, "EVA": 75}
+    }
+
+    df_indicadores = gravar_indicadores(indicadores)
+    print("Indicadores Consolidados:")
+    print(df_indicadores)
+
+    melhor_empresa, dados = escolher_melhor_empresa(df_indicadores, criterio="ROE")
+    print(f"\nMelhor empresa com base no ROE: {melhor_empresa}\n{dados}")
